@@ -21,6 +21,7 @@
     "pug": "^2.0.3",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
-    "sequelize": "^4.37.8"
+    "sequelize": "^4.37.8",
+    "yandex-checkout": "^1.0.10"
   }
 }

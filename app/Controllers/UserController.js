@@ -4,7 +4,6 @@ const GlobalModel = require('./../Models/index');
 */
 const User = GlobalModel.users;
 const Role = GlobalModel.user_roles;
-const HttpRequest = require('request-promise');
 /*
 	VALIDATORS
 */
@@ -21,89 +20,131 @@ const fs = require('fs');
 
 class UserController {
 
-	login(Request,Response) {
-
-		Joi.validate(Request.body,UserSchemas.login,function(Error,Data){
-			if(!Error)
-			{
-				User.findOne({
-					where:{
-						email:Data.email
-					},
-					include:[Role]
-				})
-				.then( async user => {
-
-					let verified = await bcrypt.compare(Request.body.password, user.password);
- 
-					if(verified)
-					{
-						var token = jwt.sign({
-							username:user.username,
-							id:user.id, 
-							email:user.email,
-						},process.env.JWT_KEY);
-
-						delete user.dataValues.password; 
-
-						Response.send({success:true, token: token, user: user});
-						
-					}else{
-						Response.status(400);
-						Response.send({success:false,error:'Invalid password or email'});
-					}
-					
-				})
-				.catch( Error => {
-					Response.status(400);
-					Response.send({success:false,error:Error})
-				});
-			}else{
-				Response.status(400);
-				Response.send({success:false,error:Error})
-			}
-		});
-
-	}
-
-	register(Request, Response) {
-
-		if(!'auth' in Request) {
-			delete Request.body.role_id;
-		}
-		Joi.validate(Request.body,UserSchemas.register,function(Error,Data){
-			if(!Error)
-			{
-				var hash = bcrypt.hashSync(Data.password, Number(process.env.SALT_ROUNDS));
-
+	create(Request, Response) {
+		const $this = this;
+		Joi.validate(Request.body, UserSchemas.create, function(Error, Data) {
+			if(!Error) {
+				let password = $this.generatePassword(10);
+				let hash = bcrypt.hashSync( password, Number(process.env.SALT_ROUNDS));
 				let UserData = Data;
 				UserData.password = hash;
 
 				User.create(UserData).then( user => {
 
-					var token = jwt.sign({
-						username:user.name,
-						id:user.id,
-						email:user.email,
-						role_id: user.role_id
-					},process.env.JWT_KEY);
+					Response.mailer.send('send_password', {
+						    to: user.email,
+						    subject: 'Test Email',
+						    password: password,
+					}, function (err) { 
+						if (err) {
+						      console.log(err);
+						      Response.send({success:false,error:err});
+						      return;
+						}
+					});
 
-					Response.send({success: true,token: token});
+					Response.send(user);
 
-				})
-				.catch(Error => {
+				}).catch( Error => {
 					Response.status(400);
-					Response.send({success: false,error: Error});
+					Response.send({success: false, error: Error});
+				})
+
+			} else {
+				Response.send({success: false, error: Error});
+			}
+		})
+	}
+
+	edit(Request, Response) {
+		Joi.validate(Request.body, UserSchemas.edit, async function(Error, Data) {
+			if(!Error) {
+				let user = await User.findById(Request.params.id);
+
+				user.update(Data)
+				.then( user => {
+					Response.send({success:true, data: user});
+				})
+				.catch( Error => {
+					Response.status(400);
+					Response.send({success: false, error: Error});
 				});
 
 				
 
-			}else{
+			} else {
 				Response.status(400);
-				Response.send({success: false,error: Error});
+				Response.send({success: false, error: Error});
 			}
+		})
+	}
+
+	delete(Request, Response) {
+
+		if(Request.auth.id == Request.params.id) {
+			Response.send({success: false, error: 'You can not delete yourself'});
+			return;
+		}
+
+		User.findById(Request.params.id, {}).then( user => {
+			if( user ) {
+				user.destroy();
+				Response.send({success:true, data: user});	
+			} else {
+				Response.send({success: false, error: 'Did find the user'})
+			}
+			
 		});
 
+	}
+
+	changePassword(Request, Response) {
+		Joi.validate(Request.body, UserSchemas.changePassword, function(Error, Data) {
+			if(!Error) {
+				User.findById(Request.auth.id, {}).then( async user => {
+					
+					let oldPassword = await bcrypt.compare(Data.old, user.password);
+
+					if(oldPassword) {
+
+						if(Data.new === Data.repeat) {
+							user.update({
+								password: bcrypt.hashSync(Data.new, Number(process.env.SALT_ROUNDS)) 
+							})
+							.then( user => {
+								Response.send({success: true, data: 'Password successfully updated'});
+							})
+							.catch( Error => {
+								Response.status(400);
+								Response.send({success: false, error: Error});
+							});
+						} else {
+							Response.send({success: false, error: 'New password and repeat does not match'})
+						}
+						
+					} else {
+						Response.send({success: false, error: 'Wrong password'})
+					}
+
+				}).catch( Error => {
+					Response.status(400);
+					Response.send({success: false, error: Error});
+				});
+			} else {
+				Response.status(400);
+				Response.send({success: false, error: Error});
+			}
+		})
+	}
+
+	generatePassword(count) {
+	  var text = "";
+	  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	  for (var i = 0; i < count; i++)
+	    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+	  return text;
 	}
 }
 

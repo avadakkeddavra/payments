@@ -33,13 +33,7 @@ class AuthMiddleware {
             jwt.verify(token,process.env.JWT_KEY, async function(Error, Decoded) {
 
                 if(!Error) {   
-                    User.findOne({
-                        where:{
-                            username:Decoded.username,
-                            email:Decoded.email
-                        },
-                        include: [Role]
-                    }).then( user => {
+                    User.findById(Decoded.id, {}).then( user => {
 
                         if( user ) {
 
