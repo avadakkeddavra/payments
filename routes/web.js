@@ -13,6 +13,12 @@ router.get('/', AuthMiddleware.auth.bind(AuthMiddleware), AuthMiddleware.admin.b
 	res.send('Protected route'); 
 })
 
+
+router.post('/user/list', 
+		AuthMiddleware.auth.bind(AuthMiddleware), 
+		UserController.getAll.bind(UserController)
+	) 
+
 router.post('/user/create', 
 		AuthMiddleware.auth.bind(AuthMiddleware), 
 		AuthMiddleware.admin.bind(AuthMiddleware), 

@@ -146,6 +146,54 @@ class UserController {
 
 	  return text;
 	}
+
+
+	getAll(Request, Response) {
+
+		Joi.validate(Request.body, UserSchemas.filter, function(Error, Data) {
+
+
+			if(!Error) {
+				
+				const QueryObject = {
+					 order: [],
+					 where: Data,
+					 limit: Data.limit ? Data.limit : 10,
+					 offset: 0, 
+					 method: Data.method ? Data.method : 'DESC'
+				}
+
+				if( 'orderBy' in Data ) {			
+					
+					QueryObject.order.push([Data.orderBy, QueryObject.method]); 
+				
+				} else {
+					delete QueryObject.order
+				}
+
+				if('page' in Data && Data.page > 1) {
+					QueryObject.offset = (Data.page-1)*QueryObject.limit;
+				}			
+			
+				delete QueryObject.where.limit;
+				delete QueryObject.where.method;
+				delete QueryObject.where.orderBy;
+				delete QueryObject.where.page;
+
+				// Response.send(QueryObject);
+				// return;
+
+				User.findAll(QueryObject).then( users => {
+					Response.send({success: true, data: users});
+				})
+			} else {
+				Response.send({success: false, data: Error});
+			}
+
+
+		});
+
+	}
 }
 
 

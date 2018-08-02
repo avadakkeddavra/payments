@@ -33,22 +33,21 @@ class AuthMiddleware {
             jwt.verify(token,process.env.JWT_KEY, async function(Error, Decoded) {
 
                 if(!Error) {   
-                    User.findById(Decoded.id, {}).then( user => {
+
+                    User.findById(Number(Decoded.id), {}).then( user => {
 
                         if( user ) {
 
                             delete user.dataValues.password;
                             request.auth = user;
+                            
                             next();
                         } else {
                             response.status(400);
                             response.send({success: false,error: 'There are no such user founded'});
                         }
 
-                    }).catch( Error => {
-                        response.status(400);
-                        response.send({success: false, error: Error});
-                    });
+                    })
 
 
                     
