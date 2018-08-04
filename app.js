@@ -3,8 +3,9 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const mailer = require('express-mailer');
-const Yandex = require('yandex-checkout')(process.env.YANDEX_SHOP_ID, process.env.YANDEX_SECRET_KEY);
 const bunyan = require('bunyan');
+
+console.log(process.env.YANDEX_SHOP_ID, process.env.YANDEX_SECRET_KEY)
 
 const logger = bunyan.createLogger({
     name: "myapp",

@@ -1,7 +1,7 @@
 const GlobalModel = require('./../Models/index');
 const Payments = GlobalModel.payments;
 const Yandex = require('yandex-checkout')(process.env.YANDEX_SHOP_ID, process.env.YANDEX_SECRET_KEY);
-
+var request = require("request");
 
 class EcwidPaymentController {
 
@@ -11,27 +11,45 @@ class EcwidPaymentController {
 
     YandexRequest(Request, Response) {
 
-        var idempotenceKey = '02347fc4-a1f0-49db-807e-f0d67c2ed5a5';
-        Yandex.createPayment({
-            'amount': {
-                'value': '2.00',
-                'currency': 'RUB'
-            },
-            'payment_method_data': {
-                'type': 'bank_card'
-            },
-            'confirmation': {
-                'type': 'redirect',
-                'redirect_url': 'http://95.213.161.181/redirect'
+        var headers = {
+            'Content-Type': ' application/json'
+        };
+
+        headers[process.env.YANDEX_SHOP_ID] = [process.env.YANDEX_SECRET_KEY];
+
+        var options = { method: 'POST',
+            url: 'https://payment.yandex.net/api/v3/payments',
+            headers:headers,
+            body: {
+                "amount": {
+                    "value": "2.00",
+                    "currency": "RUB"
+                },
+                "payment_method_data": {
+                    "type": "bank_card"
+                },
+                "confirmation": {
+                    "type": "redirect",
+                    "return_url": "http:/95.213.161.181:3000/return"
+                },
+                "description": "Order #72"
             }
-        }, idempotenceKey)
-            .then(function(result) {
-                console.log({payment: result});
-                Response.send(result);
-            })
-            .catch(function(err) {
-                Response.send(err);
-            })
+        };
+
+        request(options, function (error, response, body) {
+            if (error)
+            {
+                Response.send(error);
+            } else {
+                Response.send({
+                    response: response,
+                    body: body
+                });
+            }
+
+
+        });
+
     }
 
 }
