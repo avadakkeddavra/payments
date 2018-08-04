@@ -25,7 +25,10 @@ class EcwidPaymentController {
         instance.post('https://payment.yandex.net/api/v3/payments', {
             headers:headers,
             data: {
-
+                "amount": {
+                    "value": "2.00",
+                    "currency": "RUB"
+                },
                 "payment_method_data": {
                     "type": "bank_card"
                 },
