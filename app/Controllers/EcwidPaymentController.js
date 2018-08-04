@@ -39,7 +39,9 @@ class EcwidPaymentController {
         request(options, function (error, response, body) {
             if (error)
             {
-                Response.send(error);
+                Response.send({
+                    error:error
+                });
             } else {
                 Response.send({
                     response: response,
