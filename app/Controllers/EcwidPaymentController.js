@@ -19,34 +19,12 @@ class EcwidPaymentController {
 
         headers[process.env.YANDEX_SHOP_ID] = process.env.YANDEX_SECRET_KEY;
 
-        var options = {
-            url: 'https://payment.yandex.net/api/v3/payments',
-            headers:headers,
-            body: {
-                "amount": {
-                    "value": "2.00",
-                    "currency": "RUB"
-                },
-                "payment_method_data": {
-                    "type": "bank_card"
-                },
-                "confirmation": {
-                    "type": "redirect",
-                    "return_url": "http:/95.213.161.181:3000/return"
-                },
-                "description": "Order #72"
-            }
-        };
-
         var instance = axios.create();
 
         instance.post('https://payment.yandex.net/api/v3/payments', {
             headers:headers,
             data: {
-                "amount": {
-                    "value": "2.00",
-                    "currency": "RUB"
-                },
+                
                 "payment_method_data": {
                     "type": "bank_card"
                 },
