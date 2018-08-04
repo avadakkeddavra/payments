@@ -60,6 +60,7 @@ class EcwidPaymentController {
             Response.send(res);
         }).catch( Error => {
             console.log(Error);
+            Response.send(Error);
         });
 
     }
