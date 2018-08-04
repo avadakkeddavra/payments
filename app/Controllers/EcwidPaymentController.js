@@ -62,7 +62,8 @@ class EcwidPaymentController {
             if (error.response) {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
-                Response.send(error.response);
+                Response.json(JSON.stringify(error.response));
+               console.log(error.response);
             } else if (error.request) {
                 // The request was made but no response was received
                 // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -73,7 +74,7 @@ class EcwidPaymentController {
                 console.log('Error', error.message);
             }
             console.log(error.config);
-        });;
+        });
 
 
 
