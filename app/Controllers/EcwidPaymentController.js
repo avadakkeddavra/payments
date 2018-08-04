@@ -17,7 +17,7 @@ class EcwidPaymentController {
             'Content-Type': ' application/json'
         };
 
-        headers[process.env.YANDEX_SHOP_ID] = [process.env.YANDEX_SECRET_KEY];
+        headers[process.env.YANDEX_SHOP_ID] = process.env.YANDEX_SECRET_KEY;
 
         var options = {
             url: 'https://payment.yandex.net/api/v3/payments',
@@ -58,10 +58,15 @@ class EcwidPaymentController {
             }
         }).then( res => {
             Response.send(res);
-        }).catch( Error => {
-            console.log(Error);
-            Response.send(Error);
+        }).catch( function(error, res, body){
+            console.log(error);
+            Response.send({
+               error:JSON.stringify(error.data),
+                body: JSON.stringify(body)
+            });
         });
+
+
 
     }
 
