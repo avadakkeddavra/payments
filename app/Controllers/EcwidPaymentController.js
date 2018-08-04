@@ -28,7 +28,7 @@ class EcwidPaymentController {
                 Response.send(result);
             })
             .catch(function(err) {
-                console.error(err);
+                Response.send(err);
             })
     }
 
