@@ -28,7 +28,6 @@ app.set('view engine', 'pug');
 
 app.use(function (Request, Response, next) {
     Response.logger = logger;
-    Response.yandex = Yandex;
     next();
 });
  
