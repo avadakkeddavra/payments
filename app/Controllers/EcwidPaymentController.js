@@ -60,10 +60,7 @@ class EcwidPaymentController {
             Response.send(res);
         }).catch( function(error, res, body){
             console.log(error);
-            Response.send({
-               error:JSON.stringify(error.data),
-                body: JSON.stringify(res.data)
-            });
+            Response.send(error.data);
         });
 
 
