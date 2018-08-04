@@ -57,10 +57,7 @@ class EcwidPaymentController {
                 "description": "Order #72"
             }
         }).then( res => {
-            Response.send(res);
-        }).catch( function(error, res, body){
-            console.log(error);
-            Response.send(error.data);
+            Response.send(res.data);
         });
 
 
