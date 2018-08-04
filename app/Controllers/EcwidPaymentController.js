@@ -14,7 +14,8 @@ class EcwidPaymentController {
     YandexRequest(Request, Response) {
 
         var headers = {
-            'Content-Type': ' application/json'
+            'Content-Type': 'application/json',
+            'Idempotence-Key': 'o123490i29-3fkldmjkl-02i-i0--0iwerkl;ef-12'
         };
 
         headers[process.env.YANDEX_SHOP_ID] = process.env.YANDEX_SECRET_KEY;
