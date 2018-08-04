@@ -32,7 +32,8 @@ class EcwidPaymentController {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
                 console.log('REEEEESSSSSSSPPPPPOOOONNNSSSSEEE');
-                console.log(error.response.headers);
+                console.log(error.response);
+                //console.log(error.response.data);
                 Response.send(error.response.data);
 
             } else if (error.request) {
@@ -47,7 +48,7 @@ class EcwidPaymentController {
                 console.log('Error', error.message);
             }
             console.log(error.config);
-        });;
+        });
 
 
 
