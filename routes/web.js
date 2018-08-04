@@ -46,4 +46,8 @@ router.post('/yandex',
 		EcwidController.YandexRequest.bind(EcwidController)
 );
 
+router.post('/redirect',
+		EcwidController.YandexCallBack.bind(EcwidController)
+);
+
 module.exports = router;
