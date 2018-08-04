@@ -4,10 +4,32 @@ const app = express();
 const bodyParser = require('body-parser');
 const mailer = require('express-mailer');
 const Yandex = require('yandex-checkout')(process.env.YANDEX_SHOP_ID, process.env.YANDEX_SECRET_KEY);
+const bunyan = require('bunyan');
+
+const logger = bunyan.createLogger({
+    name: "myapp",
+    streams: [
+        {
+            level: 'info',
+            path: './logs/logs.txt'
+        },{
+            level: 'error',
+            path: './logs/logs.txt'
+        }
+    ],
+    serializers: bunyan.stdSerializers,
+    src: true
+});
+
 
 app.set('views', './views');
 app.set('view engine', 'pug');
 
+app.use(function (Request, Response, next) {
+    Response.logger = logger;
+    Response.yandex = Yandex;
+    next();
+});
  
  
 mailer.extend(app, {

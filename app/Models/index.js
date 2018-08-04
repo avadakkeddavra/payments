@@ -23,12 +23,12 @@ fs
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.users.sync();
-db.user_roles.sync();
-db.payments.sync();
+// db.users.sync();
+// db.user_roles.sync();
+// db.payments.sync();
 
 
 db.users.belongsTo(db.user_roles, {foreignKey: 'role_id'});
-db.users.hasMany(db.payments, {foreignKey: 'user_id'});
+//db.users.hasMany(db.payments, {foreignKey: 'user_id'});
 
 module.exports = db;

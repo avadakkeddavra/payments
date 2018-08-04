@@ -161,7 +161,7 @@ class UserController {
 					 limit: Data.limit ? Data.limit : 10,
 					 offset: 0, 
 					 method: Data.method ? Data.method : 'DESC'
-				}
+				};
 
 				if( 'orderBy' in Data ) {			
 					
@@ -179,9 +179,6 @@ class UserController {
 				delete QueryObject.where.method;
 				delete QueryObject.where.orderBy;
 				delete QueryObject.where.page;
-
-				// Response.send(QueryObject);
-				// return;
 
 				User.findAll(QueryObject).then( users => {
 					Response.send({success: true, data: users});
