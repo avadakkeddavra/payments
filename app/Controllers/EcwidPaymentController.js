@@ -24,7 +24,7 @@ class EcwidPaymentController {
         instance.post('https://payment.yandex.net/api/v3/payments', {
             headers:headers,
             data: {
-                
+
                 "payment_method_data": {
                     "type": "bank_card"
                 },
@@ -40,6 +40,7 @@ class EcwidPaymentController {
             if (error.response) {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
+                console.log('REEEEESSSSSSSPPPPPOOOONNNSSSSEEE');
                 console.log(error.response.headers);
                 Response.send(error.response.data);
 
@@ -47,9 +48,11 @@ class EcwidPaymentController {
                 // The request was made but no response was received
                 // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
                 // http.ClientRequest in node.js
+                console.log('REEEEEEEEEQQQQQQUUUUUUEEEEEESSSSTTTTTTT');
                 console.log(error.request);
             } else {
                 // Something happened in setting up the request that triggered an Error
+                console.log('ERRROR MESSSAAAGGEEE');
                 console.log('Error', error.message);
             }
             console.log(error.config);
